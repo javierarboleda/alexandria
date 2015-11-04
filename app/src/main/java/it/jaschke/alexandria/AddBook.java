@@ -17,12 +17,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.scanner.ScannerActivity;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
+import it.jaschke.alexandria.util.ConnectivityUtil;
 
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -144,6 +146,13 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     private void searchAndAddBookByEan(String ean) {
+
+        if (!ConnectivityUtil.isNetworkAvailable(getActivity())) {
+            Toast.makeText(getActivity(), "No network connectivity detected.", Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
         Intent bookIntent = new Intent(getActivity(), BookService.class);
         bookIntent.putExtra(BookService.EAN, ean);
         bookIntent.setAction(BookService.FETCH_BOOK);
